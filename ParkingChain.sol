@@ -12,6 +12,8 @@ contract ParkingChain is IERC20 {
         uint number ; 
         string license ;
         uint expense;
+        bool registed;
+        bool inside;
         Payment[] record;
     }
 
@@ -70,64 +72,75 @@ contract ParkingChain is IERC20 {
         drivers[_driver].payStatus = _bool;
     }
 
+//註冊(User)
     function register (string memory _license) public returns(bool) {
+        require(!drivers[msg.sender].registed ,"Error");
+        drivers[msg.sender].registed = true;
         drivers[msg.sender].license = _license;
         licenses[_license] = msg.sender;
         drivers[msg.sender].payStatus = true;
+        drivers[msg.sender].inside = false;
         return true;
     }
 
-//ParkingLotOwner開門(In)
+//ParkingLotOwner開門-In(Deployer)
     function parkingIn(string memory _license) public returns(address){
         require(msg.sender == parkingLotOwner); //需要確認
         require(remainingLots >= 0 ,"No empty lot");
-        require(balances[licenses[_license]] >= perHalfHour,"You don't have enough money");
+        // require(balances[licenses[_license]] >= perHalfHour,"You don't have enough money");
         require(drivers[licenses[_license]].payStatus == true ,"Pay!!!");
+        require(drivers[licenses[_license]].inside==false,"Error_ParkingIn");
         setStatus(licenses[_license],false);
         drivers[licenses[_license]].timeEnter = block.timestamp;
+        drivers[licenses[_license]].inside = true;
         remainingLots -= 1;
         return licenses[_license];
     }
 
-//離場
-    function getOut() public returns(bool){
-        // if(num > 0 ){
-        //     require(drivers[msg.sender].record[num].pay == true , "UnPay")
-        // }
-        // require(drivers[msg.sender].record[num].pay == true,"UnPay");
-        drivers[msg.sender].timeOut = block.timestamp;
-        uint TotalExpense = CountTime(drivers[msg.sender].timeEnter , drivers[msg.sender].timeOut)*perHalfHour;
-        drivers[msg.sender].expense = TotalExpense;
-        Payments[msg.sender].timeEnter = drivers[msg.sender].timeEnter;
-        Payments[msg.sender].timeOut = drivers[msg.sender].timeOut;
-        Payments[msg.sender].dollars = TotalExpense;
-        Payments[msg.sender].pay = drivers[msg.sender].payStatus;
-        drivers[msg.sender].record.push((Payments[msg.sender]));
+//ParkingLotOwner開門-Out(Deployer)
+    function parkingOut(string memory _license) public returns(bool){
+        require(drivers[licenses[_license]].inside==true,"Error_ParkingOut");
+        drivers[licenses[_license]].timeOut = block.timestamp;
+        uint TotalExpense = CountTime(drivers[licenses[_license]].timeEnter , drivers[licenses[_license]].timeOut)*perHalfHour;
+        if (TotalExpense <= MaximumInOneday){
+            TotalExpense = TotalExpense;
+        }
+        else{
+            TotalExpense = MaximumInOneday;
+        }
+        drivers[licenses[_license]].expense = TotalExpense;
+        Payments[licenses[_license]].timeEnter = drivers[licenses[_license]].timeEnter;
+        Payments[licenses[_license]].timeOut = drivers[licenses[_license]].timeOut;
+        Payments[licenses[_license]].dollars = TotalExpense;
+        Payments[licenses[_license]].pay = drivers[licenses[_license]].payStatus;
+        drivers[licenses[_license]].record.push((Payments[licenses[_license]]));
+        drivers[licenses[_license]].inside = false;
+        remainingLots += 1;
     }
 
-    function search() public returns(Payment[] memory){
+    function search_driver() public returns(Payment[] memory){
         return drivers[msg.sender].record;
     } 
     
-
-    function len() public returns(uint){
-        return drivers[msg.sender].record.length;
+    function search_Deployer(string memory _license) public returns(Payment[] memory){
+        require(msg.sender == parkingLotOwner,"No Rights");
+        return drivers[licenses[_license]].record;
     } 
 
 
 //繳費
-    function parkingOut() public returns(bool){ 
+    function pay() public returns(bool){ 
         require(balances[msg.sender] >= drivers[msg.sender].expense,"Don't have enough money");
-        drivers[msg.sender].payStatus = true;
+        require(drivers[msg.sender].inside==false,"Error_Pay");
         transfer(parkingLotOwner , drivers[msg.sender].expense);
         setStatus(msg.sender,true);
         uint num = drivers[msg.sender].record.length - 1 ;
         drivers[msg.sender].record[num].pay = true;
-        drivers[msg.sender].payStatus = true;
         return true;
 
     }
 
+//計時
     function CountTime(uint In , uint Out) internal pure returns(uint){
         uint halfHours ;
         uint num = (Out - In)%1800 ;
@@ -140,17 +153,15 @@ contract ParkingChain is IERC20 {
         return halfHours;
     }
 
-//ParkingLotOwner開門(Out)
-    //這個可以改成return payStatus
-    function checkStatus(string memory _license) public returns(bool){
-        require(msg.sender == parkingLotOwner);
-        if (drivers[licenses[_license]].payStatus == true )
-        {
-            remainingLots += 1;
-        return true;
-        }
-        return false;
-    }
+    // function checkStatus(string memory _license) public returns(bool){
+    //     require(msg.sender == parkingLotOwner);
+    //     if (drivers[licenses[_license]].payStatus == true )
+    //     {
+    //         remainingLots += 1;
+    //     return true;
+    //     }
+    //     return false;
+    // }
 
 
 //以下為ERC20

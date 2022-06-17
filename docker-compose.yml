@@ -1,13 +1,16 @@
 version: '3'
 
 services:
+  # server:
+
   geth-bootnode:
     hostname: geth-bootnode
     env_file:
       - .env
     image: geth-client
     build:
-      context: .
+      context: ./geth
+      dockerfile: DockerfileGeth
       args:
         - ACCOUNT_PASSWORD=${ACCOUNT_PASSWORD}
     command: 
@@ -23,6 +26,7 @@ services:
     hostname: geth-rpc-endpoint
     env_file:
       - .env
+    container_name: geth
     image: geth-client
     depends_on:
       - geth-bootnode

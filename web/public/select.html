@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <link rel="icon" href="<%= BASE_URL %>favicon.ico">
+    <link rel="stylesheet" href="stylesheets/style.css">
+    <title><%= htmlWebpackPlugin.options.title %></title>
+  </head>
+  <body>
+    <noscript>
+      <strong>We're sorry but <%= htmlWebpackPlugin.options.title %> doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
+    </noscript>
+    <h1>XX 停車場</h1>
+    
+      <table>
+        <tr>
+          <td>日期</td>
+          <td>入場時間</td>
+          <td>離場時間</td>
+          <td>金額</td>
+          <td>是否繳納</td>
+          </tr>
+        <tr>
+          <td>2022/05/06</td>
+          <td>12:00</td>
+          <td>13:00</td>
+          <td>20 元</td>
+          <td><input id='' type="button" name="繳納" value="繳納" onclick="window.location.href='pay.html'" style="width: auto;"></input></td>
+        </tr>
+        <tr>
+          <td>2022/05/07</td>
+          <td>20:00</td>
+          <td>22:00</td>
+          <td>40 元</td>
+          <td>已繳納</td>
+        </tr>
+      </table><br>
+    
+    <input type="button" value= "返回"  onclick="window.location.href='index.html'"></input>
+    <!-- built files will be auto injected -->
+    
+  </body>
+</html>

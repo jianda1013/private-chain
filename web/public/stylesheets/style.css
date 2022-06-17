@@ -1,0 +1,67 @@
+@font-face {
+  font-family: 'cwTeXYen';
+  font-style: normal;
+  font-weight: 500;
+  src: url(//fonts.gstatic.com/ea/cwtexyen/v3/cwTeXYen-zhonly.eot);
+  src: url(//fonts.gstatic.com/ea/cwtexyen/v3/cwTeXYen-zhonly.eot?#iefix) format('embedded-opentype'),
+       url(//fonts.gstatic.com/ea/cwtexyen/v3/cwTeXYen-zhonly.woff2) format('woff2'),
+       url(//fonts.gstatic.com/ea/cwtexyen/v3/cwTeXYen-zhonly.woff) format('woff'),
+       url(//fonts.gstatic.com/ea/cwtexyen/v3/cwTeXYen-zhonly.ttf) format('truetype');
+}
+
+div {
+  background-color: rgb(148, 148, 148);
+  width: 500px;
+  height: auto;
+  border:2px rgb(33, 31, 27) solid;
+  margin: 20px auto;
+  border-radius:10%;
+}
+
+body {
+  padding: 50px;
+  font: 18px "Lucida Grande", Helvetica, Arial, sans-serif;
+  font-family: 'cwTeXYen';
+  margin:0px;
+  text-align: center;
+  background-color: rgb(235, 235, 235);
+}
+
+input {
+  padding: 5px 15px;
+  background: rgb(245, 243, 243);
+  font: 15px "Lucida Grande", Helvetica, Arial, sans-serif;
+  cursor: pointer;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+  width: 30%;
+}
+input[type="text"],input[type="password"] {
+  width: 50%;
+}
+
+table {
+  width: 500px;
+  font-size: 15px; 
+  text-align: center;
+  border: 1px solid #666;
+  border-collapse: collapse;
+  text-align: center;
+  margin-left:auto; 
+  margin-right:auto;
+}
+
+tr:nth-child(even) {
+  background: #CCC
+}
+tr:nth-child(odd) {
+  background-color: #FAFAFA;
+}
+
+tr, td {
+  border: 1px solid #666;
+}
+
+td:hover {
+  background-color: #E6FBFF;
+}
